@@ -8,6 +8,15 @@ public class LoanAccount extends Account {
     final double LOAN_ACCOUNT_WITHDRAW_PREMIUM_FEE = 0.01;
 //    Hằng số: LOAN_ACCOUNT_MAX_BALANCE định nghĩa hạn mức tối đa cho loại tài khoản này là: 100.000.000đ.
     final double LOAN_ACCOUNT_MAX_BALANCE = 100000000;
+    private double phi;
+
+    public double getPhi() {
+        return phi;
+    }
+
+    public void setPhi(double phi) {
+        this.phi = phi;
+    }
 
     public LoanAccount() {
         super();
@@ -28,17 +37,20 @@ public class LoanAccount extends Account {
         return amount*LOAN_ACCOUNT_WITHDRAW_FEE;
     }
 
-    @Override
-    protected double sodu(double amount){
-        return  this.getBalance()-amount-this.getFeeWithDraw(amount);
-    }
+
     @Override
     public boolean withDraw(double amount) {
-
+        double newBalance=0;
         if(isAccepted(amount)){
-
-            this.setBalance(sodu(amount));
+            this.setPhi(this.getFeeWithDraw(amount));
+            newBalance= this.getBalance()-amount-this.getPhi();
+            this.setBalance(newBalance);
+            Transaction  transaction = new Transaction(this.getAccountNumber(),amount,untils.getDateTime(),true);
+            this.listTransaction.add(transaction);
             return true;
+        }else{
+            Transaction  transaction = new Transaction(this.getAccountNumber(),amount,untils.getDateTime(),false);
+            this.listTransaction.add(transaction);
         }
         return false;
     }
@@ -60,7 +72,7 @@ public class LoanAccount extends Account {
         System.out.printf("STK: %22s %n",this.getAccountNumber());
         System.out.printf("SO TIEN:%22s %n ",untils.formatBalance(amount));
         System.out.printf("SO DU:%22s %n",untils.formatBalance(this.getBalance()));
-        System.out.printf("PHI+VAT:%22s %n  ", untils.formatBalance(this.getFeeWithDraw(amount)));
+        System.out.printf("PHI+VAT:%22s %n  ", untils.formatBalance(this.getPhi()));
         System.out.println(untils.getDevider());
     }
 }

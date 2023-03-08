@@ -2,8 +2,11 @@ package Object;
 
 import interfaces.ReporService;
 import interfaces.WithDraw;
+import models.Transaction;
 import models.Untils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Account implements WithDraw, ReporService {
@@ -11,8 +14,18 @@ public class Account implements WithDraw, ReporService {
     private double balance;
 
     private String loaiTaiKhoan;
+
+    // mỗi tài khoản nó sẽ có mảng danh sách giao dịch
+    protected List<Transaction> listTransaction = new ArrayList<Transaction>();
     protected   static Untils untils = new Untils();
 
+    public List<Transaction> getListTransaction() {
+        return listTransaction;
+    }
+
+    public void setListTransaction(List<Transaction> listTransaction) {
+        this.listTransaction = null;
+    }
 
     private static  final Scanner sc = new Scanner(System.in);
     //constructor
@@ -76,9 +89,7 @@ public class Account implements WithDraw, ReporService {
     }
 
     //tinh so du
-    protected double sodu(double amount){
-        return  this.getBalance()-amount-this.getFeeWithDraw(amount);
-    }
+
 
     @Override
     public  String toString() {
@@ -101,7 +112,7 @@ public class Account implements WithDraw, ReporService {
 
     @Override
     public void log(double amount) {
-        String title ="Tai khoan  "+this.getLoaiTaiKhoan();
+        final String title = "Giao dich";
         final String ATM_ID ="DIGITAL-BANK-ATM-2022";
         System.out.println(untils.getDevider());
         System.out.printf("%28s %n",title);
@@ -109,7 +120,7 @@ public class Account implements WithDraw, ReporService {
         System.out.printf("ATM ID: %22s %n ",ATM_ID);
         System.out.printf("STK: %22s %n",this.getAccountNumber());
         System.out.printf("SO TIEN:%22s %n ",untils.formatBalance(amount));
-        System.out.printf("SO DU:%22s %n",untils.formatBalance(this.sodu(amount)));
+        System.out.printf("SO DU:%22s %n",untils.formatBalance(this.getBalance()-this.getFeeWithDraw(amount)));
         System.out.printf("PHI+VAT:%22s %n  ", untils.formatBalance(this.getFeeWithDraw(amount)));
         System.out.println(untils.getDevider());
     }

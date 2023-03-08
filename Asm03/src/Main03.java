@@ -3,6 +3,7 @@ import Object.Customer;
 import models.DigitalBank;
 import models.LoanAccount;
 import models.SavingAccount;
+import models.Transaction;
 
 import java.util.Scanner;
 
@@ -82,14 +83,14 @@ public class Main03 {
                     System.out.print("Nhập số tiền cần rút: ");
                     double money = sc.nextDouble();
                     if(account.getLoaiTaiKhoan().equals("LoanAccount")){
-                        account = new LoanAccount(account.getAccountNumber(),account.getBalance());
+//                        account = new LoanAccount(account.getAccountNumber(),account.getBalance());
                         account.withDraw(money);
                         account.log(money);
-                        customer.getAccounts();
+
 
 
                     }else {
-                        account = new SavingAccount();
+//                        account = new SavingAccount();
                         account.withDraw(money);
                         account.log(money);
                     }
@@ -110,7 +111,20 @@ public class Main03 {
 
      */
     private  static  void  historyTransaction (String customerId){
+        Customer customer = activeBank.getCustomerById(customerId);
+        if(customer!=null){
+            System.out.println("************ LICH SU GIAO DICH **********");
+            showCustomer(customerId);
+            for (Account account: customer.getAccounts()) {
+                for (Transaction tr: account.getListTransaction()) {
+                    if(tr.isStatus() ==true)
+                     System.out.println(tr.getAccountNumber()+ " |  "+tr.getAmount()+"  | "+tr.getTime());
+                }
+            }
 
+        }else {
+            System.out.println("Khong ton tai khach hang nay trong he thong !!!");
+        }
     }
 
 //      - hàm menu in ra menu cho chuong trinh
@@ -139,31 +153,31 @@ public class Main03 {
             System.out.print("Chuc nang: ");
 //            try {
             int selection = sc.nextInt();
-            switch (selection){
-                case 0:{
+            switch (selection) {
+                case 0: {
                     // Exit
-                    stop =true;
+                    stop = true;
                     System.out.println("Tam biet quy khach - hen gap lai !!!");
                     break;
                 }
-                case 1:{
+                case 1: {
                     //Thông tin khách hàng
                     showCustomer(CUSTOMER_ID);
                     break;
                 }
-                case 2:{
+                case 2: {
 //                    account = new SavingAccount();
                     // Thêm tài khoản saving
                     addSavingAccount(CUSTOMER_ID);
                     break;
                 }
-                case 3:{
+                case 3: {
                     // thêm tài khoản Loan
-                     Account account = new LoanAccount();
-                     addLoanAccount(CUSTOMER_ID,account);
+                    Account account = new LoanAccount();
+                    addLoanAccount(CUSTOMER_ID, account);
                     break;
                 }
-                case 4:{
+                case 4: {
                     //Rút tiền
                         /*
                         Cho người dùng nhập số tiền cần rút
@@ -181,16 +195,17 @@ public class Main03 {
                     withDrawAccount(CUSTOMER_ID);
                     break;
                 }
-                case  5:{
-
+                case 5: {
+                    historyTransaction(CUSTOMER_ID);
                     break;
                 }
-                default:{
+                default: {
                     // Hien thi lai menu
                     System.out.println("Nhap khong dung ⛔⛔⛔");
                 }
             }
-        }while (!stop);
+        }
+        while (!stop);
 
     }
 }
